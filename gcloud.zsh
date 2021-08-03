@@ -23,28 +23,28 @@ function _set_zsh_gcloud_prompt() {
 }
 
 function _is_gcloud_config_updated() {
-    local active_config config_default configurations
-    local active_config_now config_default_now configurations_now
-    local active_config_mtime config_default_mtime configurations_mtime mtime_fmt
+    local active_config config configurations
+    local active_config_now config_now configurations_now
+    local active_config_mtime config_mtime configurations_mtime mtime_fmt
 
     # if one of these files is modified, assume gcloud configuration is updated
     active_config="$HOME/.config/gcloud/active_config"
-    config_default="$HOME/.config/gcloud/configurations/config_default"
+    config="$HOME/.config/gcloud/configurations/config_$(< ${active_config})"
     configurations="$HOME/.config/gcloud/configurations"
 
     zstyle -s ':zsh-gcloud-prompt:' mtime_fmt mtime_fmt
 
     active_config_now="$(stat $mtime_fmt $active_config 2>/dev/null)"
-    config_default_now="$(stat $mtime_fmt $config_default 2>/dev/null)"
+    config_now="$(stat $mtime_fmt $config 2>/dev/null)"
     configurations_now="$(stat $mtime_fmt $configurations 2>/dev/null)"
 
     zstyle -s ':zsh-gcloud-prompt:' active_config_mtime active_config_mtime
-    zstyle -s ':zsh-gcloud-prompt:' config_default_mtime config_default_mtime
+    zstyle -s ':zsh-gcloud-prompt:' config_mtime config_mtime
     zstyle -s ':zsh-gcloud-prompt:' configurations_mtime configurations_mtime
 
-    if [[ "$active_config_mtime" != "$active_config_now" || "$config_default_mtime" != "$config_default_now" || "$configurations_mtime" != "$configurations_now" ]]; then
+    if [[ "$active_config_mtime" != "$active_config_now" || "$config_mtime" != "$config_now" || "$configurations_mtime" != "$configurations_now" ]]; then
         zstyle ':zsh-gcloud-prompt:' active_config_mtime "$active_config_now"
-        zstyle ':zsh-gcloud-prompt:' config_default_mtime "$config_default_now"
+        zstyle ':zsh-gcloud-prompt:' config_mtime "$config_now"
         zstyle ':zsh-gcloud-prompt:' configurations_mtime "$configurations_now"
         return 0
     else
